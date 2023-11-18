@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/shoelace-autoloader.js"></script>
+<script>
+    function changeIt(host){
+        console.log(host.name);
+        var val = host.name;
+        host.name = (val == "Joe") ? "World" : "Joe";
+    }
+</script>
+
+<body>
+<script type="module">
+    import { define, html } from 'https://esm.sh/hybrids@^8';
+    
+    define({
+      tag: "hello-world",
+      name: '',
+      content: (host) => { return html`<sl-button onclick="${()=>changeIt(host)}">Hello ${host.name}!</sl-button>`},
+    });
+  </script>
+<hello-world id="world" name="World"></hello-world>
+
+</body>
