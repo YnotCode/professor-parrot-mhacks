@@ -1,0 +1,86 @@
+
+<head>    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/shoelace-autoloader.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <body>
+    <script type="module" src="/static/HelloWorld.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="h-full">
+  <script>
+    function verifyThenSubmit() {
+        console.log("HERE")
+        var pwd1 = document.querySelector("#pwd1");
+        var pwd2 = document.querySelector("#pwd2");
+        requiredOnes = ["name", "email", "pwd1", "pwd2"];
+        for (el of requiredOnes){
+            var actual = document.querySelector("#" + el);
+            if (actual.value.length == 0){
+                document.querySelector("#badAlert2").open = true;
+                setTimeout(()=>{
+                    document.querySelector("#badAlert2").open = false;
+                }, 2000);
+                return;
+            }
+        }
+
+        if (pwd1.value != pwd2.value) {
+            document.querySelector("#badAlert").open = true;
+            setTimeout(()=>{
+                document.querySelector("#badAlert").open = false;
+            }, 2000);
+            return;
+        }
+        document.querySelector("#theForm").submit();
+    }
+
+    window.onload = function(){
+        var url = new URLSearchParams(window.location.search)
+        if (url.get("failedexists")){
+            document.querySelector("#badAlert3").open = true;
+            setTimeout(()=>{
+                document.querySelector("#badAlert3").open = false;
+            }, 3000);
+        }
+    }
+  </script>
+    <form class="input-validation-required" id="theForm" action="{{ url_for('authenticatesignup') }}" method="post" enctype="multipart/form-data">
+        <sl-alert id="badAlert" variant="warning">
+            <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+            <strong>Passwords do not match.</strong><br />
+            Make sure you type the same password both times.
+        </sl-alert>
+        <sl-alert id="badAlert2" variant="warning">
+            <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+            <strong>Fill out all fields.</strong><br />
+            Make sure you fill out everything before submitting.
+        </sl-alert>
+        <sl-alert id="badAlert3" variant="warning">
+            <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+            <strong>Email already has an account</strong><br />
+            Choose an email that does not have an account or sign in with an existing one.
+        </sl-alert>
+        <div class="flex flex-col h-full w-full align-baseline justify-center">
+            <sl-card class="self-center flex justify-center flex-col max-w-[90%] sm:min-w-[400px] min-h-[400px]">
+                <div class="self-center flex justify-center flex-col max-w-[90%] sm:min-w-[400px] min-h-[400px]">
+                    <a href= "/" class="self-center">
+                        <img src="/static/parrot.png" class= "w-16 h-16">
+                    </a>
+                    <h1 class="self-center font-bold text-3xl p-5">Let's get learning.</h1>
+                    <div class="flex-grow flex"></div>
+                    <sl-input required id="name" name="name" label="Name"  placeholder="Enter your name" class="pl-2 pr-2 pb-2"></sl-input>
+                    <sl-input required id="email" name="email" label="Email" placeholder="Enter your email" class="pl-2 pr-2 pb-2"></sl-input>
+                    <sl-input required id="pwd1" name="pwd" label="Password" type="password" password-toggle placeholder="Enter a strong password" class="pl-2 pr-2 pb-2"></sl-input>
+                    <sl-input required id="pwd2" name="pwdAgain" label="Repeat Password" type="password" placeholder="Repeat your password" password-toggle  class="pl-2 pr-2 pb-2"></sl-input>
+                    <div class="flex-grow flex my-1"></div>
+                    <sl-button onclick="verifyThenSubmit()" variant="primary" class="self-center w-full pl-2 pr-2 pb-2" id="loginBtn">Sign Up</sl-button>
+                    <div class="flex-grow flex"></div>
+                    <a href="/login" class="self-center p-2">
+                        <p class="no-underline hover:underline text-gray-400 hover:text-gray-500">Already have an account? Sign In.</p>
+                    </a>
+                    
+                </div>
+            </sl-card>
+        </div>
+    </form>
+</body>

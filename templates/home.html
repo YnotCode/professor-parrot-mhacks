@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/themes/light.css" />
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/shoelace-autoloader.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <title>Professor Parrot</title>
+    </head>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script>
+        window.onload = function(){
+            var loggedIn = Cookies.get("logged-in")
+            if (!loggedIn){
+                return;
+            }
+            var key = Cookies.get('session-key')
+
+            fetch("{{url_for('getuserpage')}}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "key": key,
+                    "class": "apush"
+                })
+            }).then((raw)=>{
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        var p = parseInt(data.page);
+                        fetch("/getcourselength?class=apush").then((rw) => {
+                            rw.json().then(d => {
+                                var l = parseInt(d.length)
+                                last = ((p-21) / l) * 100
+                                document.querySelector("#apush").completion = last.toFixed(2);
+                            });
+                        });
+                        fetch("/getcourselength?class=bio").then((rw) => {
+                            rw.json().then(d => {
+                                var l = parseInt(d.length)
+                                last = ((p-18) / l) * 100
+                                document.querySelector("#bio").completion = last.toFixed(2);
+                            });
+                        });
+                    }
+                });
+            });
+
+            fetch("{{url_for('getuserdata')}}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "key": key
+                })
+            }).then(raw => {
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        var name = data.name;
+                        var lrate = data.lrate;
+                        document.querySelector("#header").innerHTML = "Welcome, " + name + "!";
+                        document.querySelector("#userProfile").style.display = "block";
+                        document.querySelector("#userAvatar").initials = name.split(" ").map(n => n[0]).join("");
+                        document.querySelector("#userName").innerHTML = name.split(" ")[0];
+                        document.querySelector("#loginBtn").style.display = "none";
+                    }
+                });
+            })
+        }
+        
+    </script>
+
+    <body>
+        
+        <nav-bar></nav-bar>
+        
+        <div class="mx-4 py-5">
+            <h1 id="header" class="text-teal-700 text-5xl font-bold">Welcome!</h1> 
+            <div id="ap-selection" class="my-6 mx-2 w-full">
+                <p class="text-teal-900 text-lg font-medium">Your Classes</p>
+                <div id="aps" class="flex flex-wrap gap-4">
+                    <a href="/learn?class=apush">
+                        <subject-card id="apush" subject="AP United States History" completion="0"></subject-card>
+                    </a>
+                    <a href="/learn?class=bio">
+                        <subject-card id="bio" subject="AP Biology" completion="0"></subject-card>
+                    </a>
+                    <a href="">
+                        <subject-card subject="AP Physics C: Mechanics" completion="0"></subject-card>
+                    </a>
+                    <a href="">
+                        <subject-card subject="AP Psychology" completion="0"></subject-card>
+                    </a>
+                </div>
+            </div>
+            <div id="topic-history" class="my-6 mx-2">
+                <p class="text-teal-900 text-lg font-medium">Your Topics</p>
+                <sl-input placeholder="Search" class="w-1/3 my-5"></sl-input>
+                <div class="my-4 w-full overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <tbody>
+                            <tr class="bg-white">
+                                <td class="border px-4 py-2">1.4 Columbian Exchange, Spanish Exploration, and Conquest</td>
+                                <td class="border px-4 py-2 justify-items-center">
+                                    Mastery: <sl-rating label="Rating" readonly value="3.5"></sl-rating>
+                                </td>
+                                <td class= "border px-4 py-2 text-gray-300"> Yesterday </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border px-4 py-2">1.5 Labor, Slavery, and Caste in the Spanish Colonial System</td>
+                                <td class="border px-4 py-2 justify-items-center">
+                                    Mastery: <sl-rating label="Rating" readonly value="2.5"></sl-rating>
+                                </td>
+                                <td class= "border px-4 py-2 text-gray-300"> Yesterday </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border px-4 py-2">1.6 Cultural Interactions Between Europeans, Native Americans, and Africans</td>
+                                <td class="border px-4 py-2 justify-items-center">
+                                    Mastery: <sl-rating label="Rating" readonly value="3.5"></sl-rating>
+                                </td>
+                                <td class= "border px-4 py-2 text-gray-300"> Yesterday </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border px-4 py-2">1.7 Causation in Period 1</td>
+                                <td class="border px-4 py-2 justify-items-center">
+                                    Mastery: <sl-rating label="Rating" readonly value="3.5"></sl-rating>
+                                </td>
+                                <td class= "border px-4 py-2 text-gray-300"> Yesterday </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="/static/HelloWorld.js"></script>
+        <script type="module" src="/static/subjectCard.js"></script>
+        <script type="module" src="/static/TopicRow.js"></script>
+        <script type="module" src="/static/Navbar.js"></script>
+    </body>
+</html>

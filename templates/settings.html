@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/themes/light.css" />
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/shoelace-autoloader.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Settings</title>
+    </head>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script>
+        var key = "";
+        window.onload = function(){
+            var loggedIn = Cookies.get("logged-in")
+            if (!loggedIn){
+                return;
+            }
+            key = Cookies.get('session-key')
+            fetch("{{url_for('getuserdata')}}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "key": key
+                })
+            }).then(raw => {
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        var name = data.name;
+                        document.querySelector("#name-field").value = name;
+                        document.querySelector("#userProfile").style.display = "block";
+                        document.querySelector("#userAvatar").initials = name.split(" ").map(n => n[0]).join("");
+                        document.querySelector("#userName").innerHTML = name.split(" ")[0];
+                        document.querySelector("#loginBtn").style.display = "none";
+                        
+                    }
+                });
+            })
+
+            
+        }
+
+        function deleteAccount(){
+            fetch("/deleteAccount?key=" + key).then(()=>{
+                Cookies.set("logged-in", "false")
+                Cookies.set("session-key", "asklnjfjndsfk")
+                window.location.reload()
+            });
+        }
+        
+    </script>
+
+    <body>
+
+        <nav-bar></nav-bar>
+        <div class="flex items-center justify-center">
+            <div class="mx-4 py-5 w-2/3">
+                <h1 class="text-teal-700 text-5xl font-bold">Settings</h1> 
+                <div id="settings" class="my-6 w-full flex flex-col font-medium gap-6">
+                    <div class="flex items-center justify-between">  
+                        <p>Name</p>
+                        <sl-input id="name-field" value="" class="w-1/2" type="text" ></sl-input>
+                    </div>
+                    <div class="flex items-center justify-between">  
+                        <p>Profile Photo</p>
+                        <sl-button class="w-1/2 justify-center" variant="primary">
+                            <sl-icon slot="prefix" name="upload"></sl-icon>
+                            Upload
+                        </sl-button>
+                    </div>
+                    <div class="flex flex-col justify-between my-4"> 
+                        <p class="font-bold my-10">Change Password</p>
+                        <div class="flex my-4">
+                            <p>Enter Current Password</p>
+                            <div class="flex flex-grow"></div>
+                            <sl-input class="w-1/2" type="text" ></sl-input>
+                        </div> 
+                        <div class="flex my-4">
+                            <p>Enter New Password</p>
+                            <div class="flex flex-grow"></div>
+                            <sl-input class="w-1/2" type="text" ></sl-input>
+                        </div>
+                        <div class="flex my-4">
+                            <p>Confirm New Password</p>
+                            <div class="flex flex-grow"></div>
+                            <sl-input class="w-1/2" type="text" ></sl-input>
+                        </div>
+                        
+                        
+                    </div>
+                    <div id="enrolledCourses" class="flex flex-col">
+                        <p class="font-bold mt-10">Enrolled Courses</p>
+                        <div id="aps" class="flex flex-wrap gap-4">
+                            <a href="/learn">
+                                <subject-settings subject="AP United States History" completion="50"></subject-settings>
+                            </a>
+                            <a href="">
+                                <subject-settings subject="AP Biology" completion="0"></subject-card>
+                            </a>
+                            <a href="">
+                                <subject-settings subject="AP Physics C: Mechanics" completion="0"></subject-card>
+                            </a>
+                            <a href="">
+                                <subject-settings subject="AP Psychology" completion="0"></subject-card>
+                            </a>
+                        </div>
+                    </div>
+                    <sl-button onclick="deleteAccount()" class="mt-10 w-1/3 justify-center" variant="danger">
+                        <sl-icon slot="prefix" name="trash"></sl-icon>
+                        Delete Account</sl-button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="/static/subjectCardSetting.js"></script>
+        <script type="module" src="/static/Navbar.js"></script>
+        <script type="module" src="/static/subjectCard.js"></script>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+**Passage:**
+
+The following is an excerpt from the sixteenth-century Florentine Codex of the writings of Fray Bernardino de Sahagun, a priest and early chronicler of Aztec history. When an old man from Xochimilco first saw the Spanish in Veracruz, he recounted an earlier dream to Moctezuma, the ruler of the Aztecs.
+
+“Said Quzatli to the sovereign, ‘Oh mighty lord, if because I tell you the truth I am to die, nevertheless I am here in your presence and you may do what you wish to me!’ He narrated that mounted men would come to this land in a great wooden house [ships]; this structure was to lodge many men, serving them as a home; within they would eat and sleep. On the surface of this house they would cook their food, walk and play as if they were on firm land. They were to be White, bearded men, dressed in different colors and on their heads they would wear round coverings.”
+
+Ten years before the arrival of the Spanish, Moctezuma received several omens which at the time he could not interpret. A fiery object appeared in the night sky, a spontaneous fire broke out in a religious temple and could not be extinguished with water, a water spout appeared in Lake Texcoco, and a woman could be heard wailing, “O my children we are about to go forever.” Moctezuma also had dreams and premonitions of impending disaster. These foretellings were recorded after the Aztecs’ destruction. They do, however, give us insight into the importance placed upon signs and omens in the pre-Columbian world.
+
+**In South America:**
+
+The most highly developed and complex society was that of the Inca, whose name means “lord” or “ruler” in the Andean language called Quechua. At its height in the fifteenth and sixteenth centuries, the Inca Empire, located on the Pacific coast and straddling the Andes Mountains, extended some twenty-five hundred miles. It stretched from modern-day Colombia in the north to Chile in the south and included cities built at an altitude of 14,000 feet above sea level. Its road system, kept free of debris and repaired by workers stationed at varying intervals, rivaled that of the Romans and efficiently connected the sprawling empire.
+
+**Transportation and Communication:**
+
+The Inca, like all other pre-Columbian societies, did not use axle-mounted wheels for transportation. They built stepped roads to ascend and descend the steep slopes of the Andes; these would have been impractical for wheeled vehicles but worked well for pedestrians. These roads enabled the rapid movement of the highly trained Incan army. Also like the Romans, the Inca were effective administrators. Runners called chasquis traversed the roads in a continuous relay system, ensuring quick communication over long distances. The Inca had no system of writing, however. They communicated and kept records using a system of colored strings and knots called the quipu.

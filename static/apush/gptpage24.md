@@ -1,0 +1,9 @@
+**FIGURE 1.5**
+
+El Castillo, located at Chichen Itza in the eastern Yucatán peninsula, served as a temple for the god Kukulkan. Each side contains ninety-one steps to the top. When counting the top platform, the total number of stairs is three hundred and sixty-five, the number of days in a year. 
+
+**THE AZTEC**
+
+When the Spaniard Hernán Cortés arrived on the coast of Mexico in the sixteenth century, at the site of present-day Veracruz, he soon heard of a great city ruled by an emperor named Moctezuma. This city was tremendously wealthy—filled with gold—and took in tribute from surrounding tribes. The riches and complexity Cortés found when he arrived at that city, known as Tenochtitlán, were far beyond anything he or his men had ever seen. According to legend, a warlike people called the Aztec (also known as the Mexica) had left a city called Aztlán and traveled south to the site of present-day Mexico City. In 1325, they began construction of Tenochtitlán on an island in Lake Texcoco. By 1519, when Cortés arrived, this settlement contained upwards of 200,000 inhabitants and was certainly the largest city in the Western Hemisphere at that time and probably larger than any European city. 
+
+One of Cortés’s soldiers, Bernal Díaz del Castillo, recorded his impressions upon first seeing it: “When we saw so many cities and villages built in the water and other great towns on dry land we were amazed and said it was like the enchantments... on account of the great towers and cues and buildings rising from the water, and all built of masonry. And some of our soldiers even asked whether the things that we saw were not a dream?... I do not know how to describe it, seeing things as we did that had never been heard of or seen before, not even dreamed about.” 1.1 • The Americas 11

@@ -1,0 +1,11 @@
+**The Olmec**
+
+The Olmec carved heads from giant boulders that ranged from four to eleven feet in height and could weigh up to fifty tons. All these figures have flat noses, slightly crossed eyes, and large lips. These physical features can be seen today in some of the peoples indigenous to the area.
+
+**Teotihuacan**
+
+After the decline of the Olmec, a city rose in the fertile central highlands of Mesoamerica. One of the largest population centers in pre-Columbian America and home to more than 100,000 people at its height in about 500 CE, Teotihuacan was located about thirty miles northeast of modern Mexico City. The ethnicity of this settlement's inhabitants is debated; some scholars believe it was a multiethnic city. Large-scale agriculture and the resultant abundance of food allowed time for people to develop special trades and skills other than farming. Builders constructed over twenty-two hundred apartment compounds for multiple families, as well as more than a hundred temples. Among these were the Pyramid of the Sun (which is two hundred feet high) and the Pyramid of the Moon (one hundred and fifty feet high). Near the Temple of the Feathered Serpent, graves have been uncovered that suggest humans were sacrificed for religious purposes. The city was also the center for trade, which extended to settlements on Mesoamerica's Gulf Coast. The Maya were one Mesoamerican culture that had strong ties to Teotihuacan.
+
+**The Maya**
+
+The Maya's architectural and mathematical contributions were significant. Flourishing from roughly 2000 BCE to 900 CE in what is now Mexico, Belize, Honduras, and Guatemala, the Maya perfected the calendar and written language the Olmec had begun. They devised a written mathematical system to record crop yields and the size of the population, and to assist in trade. Surrounded by farms relying on primitive agriculture, they built the city-states of Copan, Tikal, and Chichen Itza along their major trade routes, as well as temples, statues of gods, pyramids, and astronomical observatories. However, because of poor soil and a drought that lasted nearly two centuries, their civilization declined by about 900 CE and they abandoned their large population centers.

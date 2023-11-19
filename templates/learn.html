@@ -1,0 +1,594 @@
+<head>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.2/cdn/shoelace-autoloader.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+</head>
+<body >
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
+    <script
+    type="module"
+    src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"
+    ></script>
+    <style>
+        .wrap-text-button {
+            white-space: normal; /* Allows text to wrap */
+            overflow-wrap: break-word; /* Ensures long words don't overflow */
+            text-align: center; /* Optional: For center alignment of text */
+            /* Additional styling as needed */
+        }
+    </style>
+    <script>
+
+        var urlparams = new URLSearchParams(window.location.search)
+        var ischallenge = urlparams.has("prb") ? urlparams.get("prb") : -1;
+        var page = urlparams.has("page") ? urlparams.get("page") : -1;
+        var userclass = urlparams.has("class") ? urlparams.get("class") : "apush";
+        var pageinurl = urlparams.has("page")
+        var answer = "";
+        var selected = "sdfksd";
+        var key = "";
+        var learningRate = 0;
+
+        window.onload = function(){
+            if (ischallenge != -1){
+                loadPageCheck()
+            }
+            var loggedIn = Cookies.get("logged-in")
+            if (!loggedIn){
+                return;
+            }
+            key = Cookies.get('session-key')
+            //login
+            fetch("{{url_for('getuserdata')}}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "key": key
+                })
+            }).then(raw => {
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        var name = data.name;
+                        learningRate = data.lrate;
+                        document.querySelector("#lratedisplay").innerHTML = "🧠 Learning Rate: " + learningRate +"/10";
+                        document.querySelector("#lratedisplay").value = learningRate * 10
+                        document.querySelector("#userAvatar").initials = name.split(" ").map(n => n[0]).join("");
+                        document.querySelector("#userProfile").style.display = "block";
+                        document.querySelector("#userName").innerHTML = name.split(" ")[0];
+                        document.querySelector("#loginBtn").style.display = "none";
+                    }
+                });
+            });
+
+            //get page
+            fetch("{{url_for('getuserpage')}}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "key": key,
+                    "class": userclass
+                })
+            }).then(raw => {
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        page = page == -1 ? data.page : page;
+                        console.log("You should be on page ", page)
+                        var datares = data.page;
+                        fetch("{{url_for('getpagedata')}}?page=" + page + "&class=" + userclass).then(raw => {
+                            raw.json().then(data => {
+                                if (data.res == "success"){
+                                    var content = data.content;
+                                    fetch("{{url_for('classifywithkco')}}", {
+                                        method: "POST",
+                                        headers:{"Content-Type": "application/json"},
+                                        body: JSON.stringify({"passage": data.content, "page": page, "class": userclass})
+                                    }).then(raw => {
+                                        raw.json().then(data=>{
+                                            if (data.res == "success"){
+                                                var result = data.result;
+                                                var kco = "Key Concept";
+                                                var kcocontent = "Content";
+                                                if(result.includes("-")){
+                                                    kco = result.split("-")[0];
+                                                    kcocontent = result.split("-")[1];
+                                                }
+                                                else if(result.includes("—")){
+                                                    kco = result.split("—")[0];
+                                                    kcocontent = result.split("—")[1];
+                                                }
+                                                else if(result.includes(":")){
+                                                    kco = result.split("—")[0];
+                                                    kcocontent = result.split("—")[1];
+                                                }
+                                                
+                                                document.querySelector("#kcodisplay").innerHTML = kco;
+                                                document.querySelector("#kcotooltip").content = kcocontent;
+                                            }
+                                            else{
+                                                console.log(data.res)
+                                            }
+                                        });
+                                    });
+
+                                    fetch("/getimages?page=" + page + "&class=" + userclass).then((r)=>{
+                                        r.json().then(data => {
+                                            if (data.res == "success"){
+                                                if (data.images.length == 0){
+                                                    document.querySelector("#images-holder").style.display = "none";
+                                                    document.querySelector("#images-header").style.display = "none";
+                                                }
+                                                for (var x  = 0; x < data.images.length; x++){
+                                                    var image = data.images[x];
+                                                    let caption = data.captions[x];
+                                                    var img = document.createElement("img")
+                                                    img.classList = "rounded-lg flex-grow-0 w-fit h-fit"
+                                                    img.src = "data:image/png;base64, " + image
+
+                                                    const dynamicCarousel = document.querySelector("#images-carousel");
+                                                    const slide = document.createElement("sl-carousel-item");
+    
+                                                    slide.appendChild(img);
+
+                                                    var text = document.createElement("p");
+                                                    text.innerHTML = caption;
+                                                    slide.appendChild(text);
+                                                    dynamicCarousel.appendChild(slide);
+                                                
+                                                }
+                                            }
+                                            else{
+                                                console.log(data.res)
+                                            }
+                                        });
+                                    });
+                                    document.getElementById("removeAfter").style.display = "none";
+                                    document.getElementById("pageCheckDiv").style.display = "flex";
+                                    document.getElementById("previousBtn").href = "/learn?page=" + (parseInt(page) - 1)
+                                    content = content.split("\n")
+                                    console.log(content)
+                                    for (var x = 0; x < content.length; x++){
+                                        if (content[x] == ''){
+                                            content.splice(x, 1)
+                                            x--
+                                        }
+                                    }
+
+                                    console.log(content)
+                                    nodes = []
+                                    var textElapsed = 0;
+                                    for (var y = 0; y < content.length; y++){
+                                        var mdBlock = document.createElement("md-block")
+                                        mdBlock.innerHTML = content[y];
+                                        document.querySelector("#markdown-holder").appendChild(mdBlock)
+                                        document.querySelector("#markdown-holder").appendChild(document.createElement("br"))
+                                        textElapsed += content[y].length
+                                        if (!content[y].includes("*") && textElapsed > learningRate * 50){
+                                            textElapsed = 0;
+                                            console.log(content[y])
+                                            
+                                            var aiExplanation = document.createElement("div")
+                                            aiExplanation.className = "p-4 bg-green-100 border-2 border-green-200 text-green-800 rounded-xl"
+                                            aiExplanation.innerHTML = `<div class="space-y-4 animate-pulse p-4">
+                                                <div class="h-4 bg-green-300 rounded-xl"></div>
+                                                <div class="h-4 bg-green-300 rounded-xl "></div>
+                                                <div class="h-4 bg-green-300 rounded-xl w-1/2"></div>
+                                                </div>`;  
+                                            document.querySelector("#markdown-holder").appendChild(aiExplanation)
+                                            document.querySelector("#markdown-holder").appendChild(document.createElement("br"))
+                                            nodes.push(aiExplanation)
+
+                                            console.log("SENDING REQ")
+                                            fetch("{{url_for('aisuggestion')}}", {
+                                                method: "POST",
+                                                headers:{
+                                                    "Content-Type":"application/json"
+                                                },
+                                                body:JSON.stringify({
+                                                    "passage": content[y],
+                                                    "lrate": learningRate
+                                                })
+                                            }).then(raw => {
+                                                raw.json().then(data => {
+                                                    if (data.res == "success"){
+                                                        console.log("SLKFJLSFKJ")
+                                                        var empty = true;
+                                                        var idx = 0;
+                                                        while (empty){
+                                                            if (!nodes[idx].innerHTML.includes("🦜")){
+                                                                nodes[idx].innerHTML = "🦜 <b>Parrot Power</b><br>" + data.tip
+                                                                empty = false;
+                                                            }
+                                                            idx++
+                                                            if (idx > nodes.length- 1){
+                                                                empty = false;
+                                                            }
+                                                        }
+                                                    }
+                                                    else{
+                                                        console.log(data.res)
+                                                    }
+                                                });
+
+                                            })
+                                            
+                                        }
+                                    }
+                                    
+                                    
+                                    document.getElementById("header").innerHTML = "p. " + page;
+                                    if (pageinurl && parseInt(datares) - page != 0){
+                                        console.log("HEEEE")
+                                        document.querySelector("#nextRealBtn").style.display = "none";
+                                        document.querySelector("#nextBtn").href = "/learn?page=" + (parseInt(page) + 1)
+                                        document.querySelector("#nextBtn").style.display = "block";
+                                    }
+                                    else{
+                                        document.querySelector("#nextRealBtn").style.display = "block";
+                                        document.querySelector("#nextBtn").style.display = "none";
+                                    }
+                                }
+                                else{
+                                    console.log("FAILED", data.res)
+                                }
+                            });
+                        });
+                    }
+                    else{
+                        page = 21;
+                        console.log("Starting from ", page)
+
+                        fetch("{{url_for('getpagedata')}}?page=" + page + "&class=" + userclass).then(raw => {
+                            raw.json().then(data => {
+                                if (data.res == "success"){
+                                    var content = data.content;
+                                    document.getElementById("removeAfter").style.display = "none";
+                                    document.getElementById("pageCheckDiv").style.display = "block";
+                                    document.querySelector("#markdown").innerHTML = content;
+                                }
+                                else{
+                                    console.log("FAILED", data.res)
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+
+
+        }
+
+        function parseQuestion(question){
+            console.log("here: " + question);
+            var main_question = "";
+
+            if(question.includes("Question:")){
+                main_question = question.split("Question:")[1];
+                console.log("bbbbb");
+            }
+            else{
+                main_question = question;
+                console.log("cccccc");
+            }
+            if(main_question.includes("markdown")){
+                main_quesiton = question.split("markdown")[1];
+            }
+            if(main_question.includes("```")){
+                main_question = question.split("```")[1];
+            }
+            console.log("dddcccccc");
+
+            if(!main_question.includes("A.") && !main_question.includes("A)")){
+                console.log("dddddd");
+                throw "No Answers";
+            }
+
+            console.log("eeeeee");
+            
+            
+            
+            //var options = main_question.substring(main_question.indexOf("A."), main_question.length());
+
+            var indexOfA = -1;
+            if(main_question.includes("A.")){
+                indexOfA = main_question.indexOf("A.");
+            }
+            else{
+                indexOfA = main_question.indexOf("A)");
+            }
+            var indexOfB = -1;
+            if(main_question.includes("A.")){
+                indexOfB = main_question.indexOf("B.");
+            }
+            else{
+                indexOfB = main_question.indexOf("B)");
+            }
+            var indexOfB = -1;
+            if(main_question.includes("B.")){
+                indexOfB = main_question.indexOf("B.");
+            }
+            else{
+                indexOfB = main_question.indexOf("B)");
+            }
+            var indexOfC = -1;
+            if(main_question.includes("C.")){
+                indexOfC = main_question.indexOf("C.");
+            }
+            else{
+                indexOfC = main_question.indexOf("C)");
+            }
+            var indexOfD = -1;
+            if(main_question.includes("D.")){
+                indexOfD = main_question.indexOf("D.");
+            }
+            else{
+                indexOfD = main_question.indexOf("D)");
+            }
+            var endIndex = -1;
+            if(main_question.indexOf("The correct", indexOfD) != -1){
+                endIndex = main_question.indexOf("The correct", indexOfD);
+            }
+            else if(main_question.indexOf("Correct", indexOfD) != -1){
+                endIndex = main_question.indexOf("Correct", indexOfD);
+            }
+            else if(main_question.indexOf("Answer", indexOfD) != -1){
+                    endIndex = main_question.indexOf("Answer", indexOfD);
+            }
+            else{
+                endIndex = main_question.length;
+            }
+            
+            console.log(indexOfA);
+    
+            var pure_question = main_question.substring(0, indexOfA);
+
+            console.log(indexOfA, indexOfB, indexOfC, indexOfD);
+            
+            var option_a = main_question.substring(indexOfA+2, indexOfB);
+            var option_b = main_question.substring(indexOfB+2, indexOfC);
+            var option_c = main_question.substring(indexOfC+2, indexOfD);
+            var option_d = main_question.substring(indexOfD+2, endIndex);
+
+            console.log(option_a, option_b, option_c, option_d);
+
+            return [pure_question, option_a, option_b, option_c, option_d];
+        }
+
+        function loadPageCheck(){
+            if (page % 5 == 0){
+                console.log("HERE ACTUALLY")
+                ischallenge = 1
+            }
+            document.getElementById("content").style.display = "none";
+            document.getElementById("progressBar").style.display = "none";
+            document.getElementById("pagecheck").style.display = "block";
+
+            var isLoaded = false;
+            
+
+            fetch("/generatequestion?class="+ userclass + "&page=" + page).then(raw => {
+                raw.json().then(data => {
+                    if (data.res == "success"){
+                        answer = data.result.substring(data.result.length - 1, data.result.length);
+                        var llm_response = data.result.substring(0, data.result.length - 1);
+                        var question;
+                        try{
+                            question = parseQuestion(llm_response);
+                            document.querySelector("#question").innerHTML =  question[0];
+                            document.querySelector("#optionA").innerHTML = "A)" + question[1];
+                            document.querySelector("#optionB").innerHTML = "B)" + question[2];
+                            document.querySelector("#optionC").innerHTML = "C)" + question[3];
+                            document.querySelector("#optionD").innerHTML = "D)" + question[4];
+
+                        }
+                        catch{
+                            document.querySelector("#question").innerHTML = "L bozo";
+                        }
+                        
+                    }
+                    else{
+                        document.querySelector("#question").innerHTML = "L bozo";
+                    }
+                    isLoaded = true;
+                
+                    document
+                });
+
+                
+            });
+
+            
+
+        }
+
+        function submitAnswer(){
+            showCorrect(answer)
+            if (selected == answer){
+                document.querySelector("#successAlert").open = true;
+                setTimeout(()=>{
+                    console.log("Over here!")
+                    document.querySelector("#successAlert").open = false;
+                    fetch("/advancePage?key=" + key + "&class=" + userclass).then((res)=>{
+                        res.json().then(data => {
+                            if (data.res != "success"){
+                                console.log(data.res)
+                            }
+                            fetch("/increaseLearningRate?key=" + key).then(()=>{
+                            window.location.reload();
+                            });
+                        })
+                        
+                    });
+                }, 3000);
+            }
+            else{
+                
+                document.querySelector("#failureAlert").open = true;
+                setTimeout(()=>{
+                    document.querySelector("#failureAlert").open = false;
+                    fetch("/decreaseLearningRate?key=" + key).then(()=>{
+                        window.location.reload();
+                    });
+                    
+                }, 2000);
+            }
+        }
+
+        function selectOpt(id){
+            var others = ["buttonA", "buttonB", "buttonC", "buttonD"]
+            var answers = ["A", "B", "C", "D"]
+            for (var x  = 0; x < others.length; x++){
+                var el = others[x]
+                if (el != id){
+                    document.getElementById(el).className = "border border-gray-500 text-gray-500 hover:border-gray-700 hover:text-gray-700 hover:border-b-4 py-2 hover:py-2  px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer";
+                }
+                else{
+                    selected = answers[x];
+                    document.getElementById(el).className = "border border-blue-500 text-blue-500 border-b-4 py-2 px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer";
+                }
+            }
+        }
+
+        function showCorrect(correctAnswer){
+            var others = ["buttonA", "buttonB", "buttonC", "buttonD"]
+            var answers = ["A", "B", "C", "D"]
+            for (var x  = 0; x < answers.length; x++){
+                var opt = answers[x]
+                if (opt == correctAnswer){
+                    console.log("ALTERING!!!!")
+                    document.getElementById(others[x]).className= "border border-green-500 text-green-500 border-b-4 py-2 px-4 rounded-lg transition-colors duration-200";
+                }
+            }
+        }
+
+        window.onscroll = function() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            var height = document.documentElement.clientHeight;
+            var scrolled = (scrollTop / height) * 100 * 1.370361137;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            //document.getElementById('loadingSkeleton').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+        });
+
+        
+    </script>
+
+    <nav-bar></nav-bar> 
+
+    <div class="sticky top-0 z-51">
+        <div id="progressBar" class="h-2 bg-green-300 rounded-md" style="width: 0%;"></div>
+    </div>
+
+    <sl-alert id="successAlert" variant="success">
+        <sl-icon slot="icon" name="check2-circle"></sl-icon>
+        <strong>Correct!</strong><br/>
+        You can advance to the next page.
+    </sl-alert>
+    <sl-alert id="failureAlert" variant="danger">
+        <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+        <strong>Incorrect!</strong><br />
+        Review the page and try again. 
+      </sl-alert>
+      
+    <!--<div id="loading skeleton" class="skeleton-overview">
+        <header>
+            <sl-skeleton></sl-skeleton>
+            <sl-skeleton></sl-skeleton>
+        </header>
+        
+        <sl-skeleton></sl-skeleton>
+        <sl-skeleton></sl-skeleton>
+        <sl-skeleton></sl-skeleton>
+    </div>-->
+    
+    <div id="content" class="mx-12 my-2 overflow-y-scroll overflow-x-hidden">
+        <div>
+            <div class="my-4 mr-4">
+                <div class="flex w-full justify-center">
+                    <h1 id="removeAfter">Loading...</h1>
+                </div>
+                <div class="flex w-full justify-right items-center">
+                    <div class="flex flex-col gap-2 w-1/3">
+                        <sl-tooltip id="kcotooltip" content="KCO content" class="w-fit">
+                            <h1 id="kcodisplay" class="text-teal-700 text-5xl font-bold w-fit">KCO Point</h1>
+                        </sl-tooltip>
+                        <sl-progress-bar id="lratedisplay" class=" w-full progress-bar-values custom-progress" value="0">Learning Rate: </sl-progress-bar>
+                    </div>
+                    <div class="flex-grow flex"></div>
+                    <p id="header" class="font-regular text-base text-gray-500 pr-6">p. </p>
+                    
+                    
+                </div>
+                <br>
+                <div id="markdown-holder">
+
+                </div>
+                
+                <br>
+                <h1 id="images-header" class="text-3xl text-semibold">Visuals</h1>
+                <div id="images-holder" class="flex flex-wrap items-center justify-center">
+                    <sl-carousel id="images-carousel" class="dynamic-carousel  sm:max-w-[80%] overflow-auto" pagination navigation></sl-carousel>
+                </div>
+                <br>
+                <div id="pageCheckDiv" class="hidden w-full gap-5 justify-center">
+                    <a id="previousBtn" href="/learn?page="><sl-button>Previous Page</sl-button></a>
+                    <a id="nextBtn" class="hidden" href="/learn?page="><sl-button>Next Page</sl-button></a>
+                    <sl-button id="nextRealBtn" class="hidden" onclick="loadPageCheck()">Next: Page Check</sl-button>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div id="pagecheck" class="mx-6 my-2 overflow-y-scroll overflow-x-hidden hidden center-items justify-center">
+        <div class="flex flex-col w-full align-baseline justify-center">
+            <sl-card class="self-center min-h-full flex justify-center flex-col sm:max-w-[75%] sm:min-w-[400px] my-4 rounded-sm shadow-lg shadow-zinc-300">
+                <div class="ml-4 min-h-full">
+                    <br>
+                    <p class="text-gray-400 text-sm">Page Check</p>
+                    <br>
+                    <md-block id="question" class="text-xl font-bold">
+                        <div class="h-4 bg-gray-300 rounded-xl animate-pulse"></div>
+                    </md-block>
+                    <div class="flex flex-grow my-4"></div>
+                    <br>
+                    <br>
+                    <br>
+                    <p class="font-bold text-sm mb-4 text-gray-500">Choose the best answer</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div id="buttonA" class="border border-gray-500 text-gray-500 hover:border-gray-700 hover:text-gray-700 hover:border-b-4 py-2 hover:py-2  px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer" onclick="selectOpt('buttonA')" style="width: 47%">
+                            <sl-icon name="1-circle" class="hidden"></sl-icon>
+                            <div id="optionA" class="text-left"><div class="h-4 bg-gray-300 rounded-xl animate-pulse"></div></div>
+                        </div>
+                        <div id="buttonB" class="border border-gray-500 text-gray-500 hover:border-gray-700 hover:text-gray-700 hover:border-b-4 py-2 hover:py-2  px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer" onclick="selectOpt('buttonB')" style="width: 47%">
+                            <sl-icon name="2-circle" class="hidden"></sl-icon>
+                            <div id="optionB" class="text-left"><div class="h-4 bg-gray-300 rounded-xl animate-pulse"></div></div>
+                        </div>
+                        <div id="buttonC" class="border border-gray-500 text-gray-500 hover:border-gray-700 hover:text-gray-700 hover:border-b-4 py-2 hover:py-2  px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer" onclick="selectOpt('buttonC')" style="width: 47%">
+                            <sl-icon name="3-circle" class="hidden"></sl-icon>
+                            <div id="optionC" class="text-left"><div class="h-4 bg-gray-300 rounded-xl animate-pulse"></div></div>
+                        </div>
+                        <div id="buttonD" class="border border-gray-500 text-gray-500 hover:border-gray-700 hover:text-gray-700 hover:border-b-4 py-2 hover:py-2  px-4 rounded-lg transition-colors duration-200 hover:cursor-pointer" onclick="selectOpt('buttonD')" style="width: 47%">
+                            <sl-icon name="4-circle" class="hidden"></sl-icon>
+                            <div id="optionD" class="text-left"><div class="h-4 bg-gray-300 rounded-xl animate-pulse"></div></div>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <sl-button variant="primary" onclick="submitAnswer()" class="mb-4">Submit</sl-button>
+                </div>
+            </div>
+        </sl-card>
+    </div>
+    <script type="module" src="/static/Navbar.js"></script>
+</body>

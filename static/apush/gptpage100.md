@@ -1,0 +1,5 @@
+# THE CAROLINAS
+
+Charles II hoped to establish English control of the area between Virginia and Spanish Florida. To that end, he issued a royal charter in 1663 to eight trusted and loyal supporters, each of whom was to be a feudal-style proprietor of a region of the province of Carolina. These proprietors did not relocate to the colonies, however. Instead, English plantation owners from the tiny Caribbean island of Barbados, already a well-established English sugar colony fueled by slave labor, migrated to the southern part of Carolina to settle there. In 1670, they established Charles Town (later Charleston), named in honor of Charles II, at the junction of the Ashley and Cooper Rivers.
+
+As the settlement around Charles Town grew, it began to produce livestock for export to the West Indies. In the northern part of Carolina, settlers used sap from pine trees to create tar and pitch used to waterproof wooden ships. Political disagreements between settlers in the northern and southern parts of Carolina escalated in the 1710s through 4.1 • Charles II and the Restoration Colonies 87.
